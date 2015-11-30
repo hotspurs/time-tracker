@@ -1,6 +1,9 @@
 var express = require('express'),
     app = express(),
-    path = require('path');
+    path = require('path'),
+    db = require('./libs/db.js');
+
+db.initialize();
 
 if (process.env.NODE_ENV === 'development') {
   var webpackMiddleware = require('./libs/webpack-middleware.js');
