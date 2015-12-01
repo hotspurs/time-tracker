@@ -1,35 +1,38 @@
 exports.up = function(knex, Promise) {
   return knex.schema
-  	.createTable('user', function(t){
-  		t.increments().primary();
-  		t.string('email', 30).notNullable();
-  		t.string('password', 30).notNullable();
+  	.createTable('user', function(table){
+  		table.increments();
+  		table.string('email', 50).notNullable();
+  		table.string('password', 50).notNullable();
   	})
-  	.createTable('project', function(t){
-      t.increments().primary();
-      t.string('name', 100);
+  	.createTable('project', function(table){
+      table.increments();
+
+      table.integer('user_id').unsigned().notNullable().references('id').inTable('user');
+
+      table.string('name', 100);
   	})
-    .createTable('tags', function(t){
-      t.increments();
+    .createTable('tags', function(table){
+      table.increments();
 
-      t.integer('user_id').unsigned().notNullable().references('id').inTable('user');
+      table.integer('user_id').unsigned().notNullable().references('id').inTable('user');
 
-      t.string('name', 100);
+      table.string('name', 100);
     })
-    .createTable('time_entry', function(t){
-    	t.increments();
-      t.integer('user_id').unsigned().notNullable().references('id').inTable('user');
-      t.integer('project_id').unsigned().notNullable().references('id').inTable('project');
+    .createTable('time_entry', function(table){
+    	table.increments();
+      table.integer('user_id').unsigned().notNullable().references('id').inTable('user');
+      table.integer('project_id').unsigned().notNullable().references('id').inTable('project');
 
-    	t.string('description', 100);
-    	t.timestamp('start_at');
-    	t.timestamp('stop_at');
-    	t.integer('duration');
+    	table.string('description', 100);
+    	table.timestamp('start_at');
+    	table.timestamp('stop_at');
+    	table.integer('duration');
     })
-    .createTable('time_entries_tags', function(t){
-      t.integer('tag_id').unsigned().notNullable().references('id').inTable('tags').onDelete('CASCADE');
-      t.integer('time_entry_id').unsigned().notNullable().references('id').inTable('time_entry').onDelete('CASCADE');
-      t.primary(['tag_id', 'time_entry_id']);
+    .createTable('time_entries_tags', function(table){
+      table.integer('tag_id').unsigned().notNullable().references('id').inTable('tags').onDelete('CASCADE');
+      table.integer('time_entry_id').unsigned().notNullable().references('id').inTable('time_entry').onDelete('CASCADE');
+      table.primary(['tag_id', 'time_entry_id']);
     });
 };
 
