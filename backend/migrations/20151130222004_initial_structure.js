@@ -24,7 +24,7 @@ exports.up = function(knex, Promise) {
       table.integer('user_id').unsigned().notNullable().references('id').inTable('user');
       table.integer('project_id').unsigned().notNullable().references('id').inTable('project');
 
-    	table.string('description', 100);
+    	table.string('description', 200);
     	table.timestamp('start_at');
     	table.timestamp('stop_at');
     	table.integer('duration');
