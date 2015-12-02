@@ -4,7 +4,7 @@ import Main from  'components/Main';
 
 export default class App extends React.Component {
   render() {
-    return <Main prop={20000} />
+    return <Main prop={5} />
   }
 }
 

@@ -1,11 +1,11 @@
 module.exports = {
   development: {
-    client: 'mysql',
+    client: process.env.DB_CLIENT,
     connection: {
-      host     : '127.0.0.1',
-      user     : 'hotspurs',
-      password : '12345',
-      database : 'time_tracker'
+      host     : process.env.DB_HOST,
+      user     : process.env.DB_USER,
+      password : process.env.DB_PASS,
+      database : process.env.DB_NAME
     },
     pool: {
       min: 2,

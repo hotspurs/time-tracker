@@ -1,3 +1,5 @@
+require('dotenv').load();
+
 var express = require('express'),
     app = express(),
     path = require('path'),
@@ -17,7 +19,7 @@ app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
 
-var server = app.listen(3000, function() {
+var server = app.listen(process.env.PORT, process.env.HOST, function() {
   var host = server.address().address,
       port = server.address().port;
 
