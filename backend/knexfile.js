@@ -1,3 +1,5 @@
+require('dotenv').load({path: '../.env'});
+
 module.exports = {
   development: {
     client: process.env.DB_CLIENT,
