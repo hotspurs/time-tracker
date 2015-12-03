@@ -36,9 +36,6 @@ exports.seed = function(knex, Promise) {
       return true;
     });
 
-    console.log('=>>>', time_entries_tags);
-
-
     return knex(tableName).del().then(function(){
       return knex.insert(time_entries_tags).into(tableName);
     });

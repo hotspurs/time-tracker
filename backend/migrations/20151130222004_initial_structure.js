@@ -8,21 +8,21 @@ exports.up = function(knex, Promise) {
   	.createTable('project', function(table){
       table.increments();
 
-      table.integer('user_id').unsigned().notNullable().references('id').inTable('user');
+      table.integer('user_id').unsigned().notNullable().references('id').inTable('user').onDelete('CASCADE');
 
       table.string('name', 100);
   	})
     .createTable('tags', function(table){
       table.increments();
 
-      table.integer('user_id').unsigned().notNullable().references('id').inTable('user');
+      table.integer('user_id').unsigned().notNullable().references('id').inTable('user').onDelete('CASCADE');
 
       table.string('name', 100);
     })
     .createTable('time_entry', function(table){
     	table.increments();
-      table.integer('user_id').unsigned().notNullable().references('id').inTable('user');
-      table.integer('project_id').unsigned().notNullable().references('id').inTable('project');
+      table.integer('user_id').unsigned().notNullable().references('id').inTable('user').onDelete('CASCADE');
+      table.integer('project_id').unsigned().notNullable().references('id').inTable('project').onDelete('CASCADE');
 
     	table.string('description', 200);
     	table.timestamp('start_at');

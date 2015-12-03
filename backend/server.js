@@ -1,11 +1,15 @@
 require('dotenv').load();
 
 var express = require('express'),
-    app = express(),
+    bodyParser = require('body-parser'),
+    app = module.exports = express(),
     path = require('path'),
     db = require('./libs/db.js');
 
-db.initialize();
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+app.locals.knex = db.initialize();
 
 if (process.env.NODE_ENV === 'development') {
   var webpackMiddleware = require('./libs/webpack-middleware.js');
@@ -18,6 +22,8 @@ if (process.env.NODE_ENV === 'development') {
 app.get('/', function(req, res) {
   res.sendFile(path.join(__dirname, '../frontend/index.html'));
 });
+
+app.use('/api/projects', require('./api/projects'));
 
 var server = app.listen(process.env.PORT, process.env.HOST, function() {
   var host = server.address().address,
