@@ -2,14 +2,37 @@ require('dotenv').load();
 
 var express = require('express'),
     bodyParser = require('body-parser'),
+    session = require('express-session'),
+    SessionStore = require('express-mysql-session'),
     app = module.exports = express(),
     path = require('path'),
-    db = require('./libs/db.js');
-
+    db = require('./libs/db.js'),
+    cookieParser = require('cookie-parser'),
+    sessionStore = new SessionStore({
+      host: process.env.DB_HOST,
+      port: process.env.DB_PORT,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASS,
+      database: process.env.DB_NAME
+    });
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(cookieParser());
 app.locals.knex = db.initialize();
+
+app.use(session({
+    key: 'sid',
+    secret: 'secretString',
+    store: sessionStore,
+    resave: true,
+    saveUninitialized: true,
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      maxAge: null
+    }
+}));
 
 if (process.env.NODE_ENV === 'development') {
   var webpackMiddleware = require('./libs/webpack-middleware.js');
