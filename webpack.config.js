@@ -2,10 +2,12 @@ var path = require('path'),
     webpack = require('webpack');
 
 module.exports = {
-  entry: ['webpack-hot-middleware/client',
-          './frontend/App.jsx'],
+  entry: {
+    index: ['webpack-hot-middleware/client', './frontend/App.jsx'],
+    login: ['webpack-hot-middleware/client', './frontend/Login.jsx']
+  },
   output: {
-    filename: 'bundle.js',
+    filename: '[name].bundle.js',
     path: path.join(__dirname, 'build'),
     publicPath: ''
   },
@@ -28,7 +30,7 @@ module.exports = {
         loader: 'style-loader!css-loader!autoprefixer-loader!sass-loader'
       },
       {
-        test: /\.(png|jpg|ttf|eot)$/,
+        test: /\.(png|jpg|ttf|eot|woff|woff2|svg)$/,
         exclude: /node_modules/,
         loader: 'url-loader?limit=10000'
       }

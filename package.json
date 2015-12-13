@@ -36,7 +36,8 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "passport-vkontakte": "^0.4.0",
-    "react": "^0.13.3",
+    "react": "^0.14.3",
+    "react-bootstrap": "^0.28.1",
     "underscore": "^1.8.3"
   }
 }

@@ -47,7 +47,6 @@ app.use(session({
 }));
 
 auth.initialize();
-
 app.use(router);
 app.use('/api/projects', auth.ensureAuthenticated, require('./api/projects'));
 
