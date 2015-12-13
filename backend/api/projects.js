@@ -1,6 +1,6 @@
 var router = require('express').Router(),
     app = require('../server'),
-    knex = app.locals.knex;
+    knex = app.get('knex');
 
 router.get('/', function(req,res,next){
 
