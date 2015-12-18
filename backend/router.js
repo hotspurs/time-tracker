@@ -14,13 +14,17 @@ router.get('/login', function(req, res) {
   res.sendFile(path.join(__dirname, '../frontend/login.html'));
 });
 
-router.post('/login', 
-              passport.authenticate('local', {
-                    successRedirect: '/',
-                    failureRedirect: '/login',
-                    failureFlash: false
-              }
-));
+router.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { return res.json(info); }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+
+      res.json({redirect: true});
+    });
+  })(req, res, next);
+});
 
 router.get('/auth/vkontakte', passport.authenticate('vkontakte', { scope: ['email'] }), function(req, res){
 

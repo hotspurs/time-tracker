@@ -1,10 +1,64 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Grid, Row, Col, Tabs, Tab, Input, ButtonInput} from 'react-bootstrap';
+import { Grid, Row, Col, Tabs, Tab, Input, ButtonInput, Panel} from 'react-bootstrap';
+import qwest from 'qwest';
 
 require("./styles/bootstrap.css");
 
-export default class App extends React.Component {
+export default class Login extends React.Component {
+ constructor() {
+  super();
+  this.state = {
+    email: '',
+    password: ''
+  }
+ }
+  onLoginSubmit(e) {
+    e.preventDefault();
+    var email = this.state.email,
+        password = this.state.password,
+        self = this;
+
+    if(!email || !password) return;
+
+    qwest.post('/login', {
+        email: email,
+        password: password,
+     })
+     .then(function(xhr, response) {
+        
+        if(response.message){
+          self.setState({error: true, errorMessage: response.message});
+        }
+
+        if(response.redirect){
+          window.location = '/'
+        }
+
+     })
+     .catch(function(xhr, response, e) {
+        
+     });
+  }
+  onLoginEmailChange(e) {
+    if(this.state.error) this.dropErrorMessage()
+    this.setState({email: e.target.value});
+  }
+  onLoginPasswordChange(e) {
+    if(this.state.error) this.dropErrorMessage()
+    this.setState({password: e.target.value})
+  }
+  showError(){
+    return  <Panel header="Произошла ошибка" bsStyle="danger">
+              {this.state.errorMessage}
+            </Panel>
+  }
+  dropErrorMessage(){
+    this.setState({
+      error: false,
+      errorMessage: ''
+    })
+  }
   render() {
     return <Grid> 
             <Row>
@@ -17,14 +71,15 @@ export default class App extends React.Component {
                         Войти через Вконтакте
                       </a>
                       <hr />
-                      <form action="/login" method="post">
-                        <Input name="email" type="email" label="Email Адресс" placeholder="Введите email" />
-                        <Input name="password" type="password" label="Пароль" placeholder="Введите пароль" />
+                      { this.state.error ? this.showError() : null }
+                      <form onSubmit={this.onLoginSubmit.bind(this)}>
+                        <Input onChange={this.onLoginEmailChange.bind(this)} name="email" type="email" label="Email Адресс" placeholder="Введите email" />
+                        <Input onChange={this.onLoginPasswordChange.bind(this)} name="password" type="password" label="Пароль" placeholder="Введите пароль" />
                         <ButtonInput type="submit" value="Войти" />
                       </form>
                     </Tab>
                     <Tab eventKey={2} title="Регистрация">
-                      <h3>Зарегестрируйтесь или войдите через Вконтакте</h3>
+                      <h3>Зарегестрируйтесь</h3>
                     </Tab>
                   </Tabs>
               </Col>
@@ -33,4 +88,4 @@ export default class App extends React.Component {
   }
 }
 
-ReactDOM.render(<App  />, document.getElementById('login'));
+ReactDOM.render(<Login  />, document.getElementById('login'));

@@ -42,18 +42,26 @@ module.exports = {
         usernameField: 'email',
         passwordField: 'password'
       },
-      function(username, password, done) {
+      function(email, password, done) {
 
-        knex('user').where('email', username).then(function(user){
+        console.log('email', email);
+
+        console.log('password', password);
+
+        knex('user').where('email', email).then(function(user){
+
+          user = !(user.length > 0) ? false : user[0];
+
+          console.log('USER', user);
 
           if (!user) {
-            return done(null, false, { message: 'Incorrect username.' });
+            return done(null, false, { message: 'Неправильный email' });
           }
-          if (password !== user[0].password ) {
-            return done(null, false, { message: 'Incorrect password.' });
+          if (password !== user.password ) {
+            return done(null, false, { message: 'Неправильный пароль' });
           }
 
-          return done(null, user[0]);
+          return done(null, user);
         });
       }
     ));
