@@ -26,15 +26,31 @@ module.exports = {
       },
       function(accessToken, refreshToken, params, profile, done) {
 
-        console.log('=>>>>', params.email);
+        var name = profile.name.givenName,
+            provider = profile.provider,
+            email = params.email;
 
-        knex('user').insert({ email: profile.id, password: 12345 }).then(function(id){
+
+        knex('user').where({ email: email }).then(function(user){
+          user = !(user.length > 0) ? false : user[0];
+          
+          if(!user){
+            return knex('user').insert({ email: email, provider: provider, name: name})
+          }
+          else{
+            done(null, user);
+            return false;
+          }
+        })
+        .then(function(ids){
+
+          if(!ids) return;
 
           var user = {}
-          user.id = id[0];
-
+          user.id = ids[0];
           done(null, user);
         });
+
       }
     ));
 
@@ -42,17 +58,10 @@ module.exports = {
         usernameField: 'email',
         passwordField: 'password'
       },
-      function(email, password, done) {
-
-        console.log('email', email);
-
-        console.log('password', password);
-
+      function(email, password, done){
         knex('user').where('email', email).then(function(user){
 
           user = !(user.length > 0) ? false : user[0];
-
-          console.log('USER', user);
 
           if (!user) {
             return done(null, false, { message: 'Неправильный email' });

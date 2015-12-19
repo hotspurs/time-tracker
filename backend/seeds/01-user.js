@@ -9,7 +9,13 @@ exports.seed = function(knex, Promise) {
 
     var user = {};
     user.email = faker.internet.email();
+    user.name = faker.name.firstName();
     user.password = faker.internet.password();
+
+    if(i%5 == 0){
+      delete user.password;
+      user.provider = 'vkontakte';
+    }
 
     users.push(user);
 
