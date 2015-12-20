@@ -24,12 +24,11 @@ exports.up = function(knex, Promise) {
     .createTable('time_entry', function(table){
     	table.increments();
       table.integer('user_id').unsigned().notNullable().references('id').inTable('user').onDelete('CASCADE');
-      table.integer('project_id').unsigned().notNullable().references('id').inTable('project').onDelete('CASCADE');
+      table.integer('project_id').unsigned();
 
     	table.string('description', 200);
     	table.timestamp('start_at');
     	table.timestamp('stop_at');
-    	table.integer('duration');
     })
     .createTable('time_entries_tags', function(table){
       table.integer('tag_id').unsigned().notNullable().references('id').inTable('tags').onDelete('CASCADE');

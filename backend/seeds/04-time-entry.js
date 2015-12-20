@@ -23,9 +23,6 @@ exports.seed = function(knex, Promise) {
                                                         new Date( +moment(time_entry.start_at) + 1000*60* _.random(10, 120) ) ) )
                             .format('YYYY-MM-DD HH:mm:ss');
       
-      time_entry.duration = Math.floor( ( +moment(time_entry.stop_at) - +moment(time_entry.start_at)) / 1000); //in second
-
-
       time_entries.push(time_entry);
 
     }
