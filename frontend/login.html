@@ -1,13 +1,62 @@
 <html>
 <head>
   <title>Time tracker app | Login</title>
+  <link rel="stylesheet" href="styles/bootstrap.css">
+  <link rel="stylesheet" href="styles/main.css">
   <meta charset="utf-8">
 </head>
-<body>
-<div id="login">
-  
+<body ng-app="login" ng-cloak>
+<div class="container">
+    <h1>Time tracker app</h1>
+    <uib-tabset justified="true">
+      <uib-tab heading="Авторизация">
+        <div ng-controller="loginCtrl">
+          <h3>Авторизуйтесь или войдите через Вконтакте</h3>
+          <p class="text-primary">
+            <a href="/auth/vkontakte">
+              Войти через Вконтакте
+            </a>          
+          </p>
+          <form ng-submit="onSubmit($event)" >
+            <uib-alert ng-show="error" type="danger" >{{errorMessage}}</uib-alert>
+            <div class="form-group">
+              <label for="loginEmail">Email Адресс</label>
+              <input name="email" type="email" ng-model="email" class="form-control" id="loginEmail" placeholder="Введите email">
+            </div>
+            <div class="form-group">
+              <label for="loginPassword">Пароль</label>
+              <input name="password" type="password" ng-model="password" class="form-control" id="loginPassword" placeholder="Введите пароль">
+            </div>
+            <input class="btn btn-default" type="submit" value="Войти">
+          </form>
+        </div>
+      </uib-tab>
+      <uib-tab heading="Регистрация">
+          <div ng-controller="registerCtrl">
+            <h3>Зарегестрируйтесь</h3>
+            <form ng-submit="onSubmit($event)" >
+              <uib-alert ng-show="error" type="danger" >{{errorMessage}}</uib-alert>
+              <div class="form-group">
+                <label for="registerEmail">Email Адресс</label>
+                <input name="email" type="email" ng-model="email" class="form-control" id="registerEmail" placeholder="Введите email">
+              </div>
+              <div class="form-group">
+                <label for="registerEmail">Имя</label>
+                <input name="name" ng-model="name" type="text" class="form-control" id="registerEmail" placeholder="Введите имя">
+              </div>
+              <div class="form-group">
+                <label for="registerPassword">Пароль</label>
+                <input name="password" type="password" ng-model="password" type="email" class="form-control" id="registerPassword" placeholder="Введите пароль">
+              </div>
+              <input class="btn btn-default" type="submit" value="Зарегестрироваться">
+            </form>         
+          </div>
+      </uib-tab>
+    </uib-tabset>    
 </div>
-<script src="login.bundle.js">
+<script src="vendor/angular.min.js"></script>
+<script src="vendor/ui-bootstrap-tpls-0.14.3.min.js"></script>
+<script src="javascript/login.js">
 </script>
 </body>
 </html>

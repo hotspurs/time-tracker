@@ -19,13 +19,7 @@ var express = require('express'),
     auth = require('./libs/auth.js'),
     router = require('./router.js');
 
-if (process.env.NODE_ENV === 'development') {
-  var webpackMiddleware = require('./libs/webpack-middleware.js');
-  app.use(webpackMiddleware.webpackDevMiddleware);
-  app.use(webpackMiddleware.webpackHotMiddleware);
-} else {
-  app.use(express.static(path.join(__dirname, '../build')))
-}
+app.use(express.static(path.join(__dirname, '../frontend/src/')));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
