@@ -1,3 +1,11 @@
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
   display: none !important;
 }
+
+.logout{
+  margin-top: 35px;
+}
+
+.align_center{
+  text-align: center;
+}

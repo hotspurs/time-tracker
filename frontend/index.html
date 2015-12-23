@@ -3,13 +3,97 @@
   <title>
     Time tracker app
   </title>
+  <link rel="stylesheet" href="styles/bootstrap.css">
+  <link rel="stylesheet" href="styles/main.css">
   <meta charset="utf-8">
 </head>
-<body>
-<div id="app">
-  
+<body ng-app="app" ng-cloak>
+<div ng-controller="mainCtrl" class="container">
+<div class="row">
+  <div class="col-md-12">
+    <a class="logout pull-right" href="/logout">Выход</a>
+    <h1>Time tracker app</h1>
+
+
+    <table class="table table-condensed"> 
+      <thead> 
+        <tr> 
+          <th>Описание</th>
+          <th>Проект</th>
+          <th>Дата начала</th> 
+          <th>Дата окончания</th>
+          <th></th>
+          <th></th>
+        </tr> 
+      </thead> 
+      <tbody> 
+        <tr ng-repeat="entry in entries | orderBy:'-start_at'"> 
+        <td>
+          <div ng-hide="entry.editing">
+              {{entry.description}}
+          </div>
+          <div ng-show="entry.editing">
+              <input type="text" class="form-control" ng-model="entry.description">
+          </div>
+        </td>
+        <td>
+          <div>
+            {{showEntryProject(entry.project_id)}}
+          </div>
+        </td>
+        <td>
+          <div ng-show="entry.editing">
+            <datetimepicker ng-model="entry.start_at" 
+                date-format="dd-MMM-yyyy"
+                show-meridian="false"
+                starting-day="1"
+                date-options='{"show-weeks":"false"}'
+                >
+            </datetimepicker>
+          </div>
+        <div ng-hide="entry.editing">  
+          {{formatDate(entry.start_at)}}
+        </div>
+        </td> 
+        <td>
+          <div ng-show="entry.editing">
+            <datetimepicker ng-model="entry.stop_at" 
+                date-format="dd-MMM-yyyy"
+                show-meridian="false"
+                starting-day="1"
+                date-options='{"show-weeks":"false"}'
+                >
+            </datetimepicker>
+          </div>
+        <div ng-hide="entry.editing">  
+          {{formatDate(entry.stop_at)}}
+        </div>
+        </td>
+        <td class="align_center">
+          <button ng-hide="entry.editing" ng-click="editModeEntry(entry.id)" type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Редактировать</button>
+          <button ng-show="entry.editing" ng-click="saveChangesEntry(entry.id)"  type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+          Сохранить</button>
+          
+        </td>
+        <td class="align_center">
+          <button ng-click="deleteEntry(entry.id)" type="button" class="btn btn-danger btn-sm"><span ng-click="deleteEntry(entry.id)" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+          Удалить
+          </button>
+          
+        </td>
+        </tr> 
+      <tr> 
+      </tbody> 
+    </table>
+  </div>
 </div>
-<a href="/logout">Logout</a>
-<script src="index.bundle.js"></script>
+
+</div>
+<script src="vendor/angular.min.js"></script>
+<script src="vendor/underscore.js"></script>
+<script src="vendor/ui-bootstrap-tpls-0.14.3.min.js"></script>
+<script src="vendor/datetimepicker.js"></script>
+<script src="vendor/moment-with-locales.js"></script>
+<script src="javascript/app.js"></script>
 </body>
 </html>

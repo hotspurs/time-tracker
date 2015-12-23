@@ -45,6 +45,7 @@ app.use(router);
 app.use('/api/projects', auth.ensureAuthenticated, require('./api/projects'));
 app.use('/api/tags', auth.ensureAuthenticated, require('./api/tags'));
 app.use('/api/time_entry', auth.ensureAuthenticated, require('./api/time_entry'));
+app.use('/api/time_entries_tags', auth.ensureAuthenticated, require('./api/time_entries_tags'));
 
 var server = app.listen(process.env.PORT, process.env.HOST, function() {
   var host = server.address().address,

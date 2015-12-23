@@ -4,14 +4,14 @@ exports.seed = function(knex, Promise) {
   var tableName = 'time_entries_tags';
 
   return Promise.all([
-    knex.select('id').from('time_entry'),
-    knex.select('id').from('tags')
+    knex.select('id','user_id').from('time_entry'),
+    knex.select('id','user_id').from('tags')
   ]).then(function(result){
      var time_entry_ids = result[0].map(function(item){
-                            return item.id;
+                            return {id: item.id, user_id: item.user_id};
                           }),
          tags_ids = result[1].map(function(item){
-                               return  item.id;
+                               return  {id: item.id, user_id: item.user_id};
                             });
 
     var time_entries_tags = [];
@@ -19,8 +19,10 @@ exports.seed = function(knex, Promise) {
     for(var i = 0; i<300; i++){
       var time_entry_tag = {};
 
-      time_entry_tag.tag_id = _.sample(tags_ids);
-      time_entry_tag.time_entry_id = _.sample(time_entry_ids);
+      var tagObj = _.sample(tags_ids);
+
+      time_entry_tag.tag_id = tagObj.id;
+      time_entry_tag.time_entry_id = _.where(time_entry_ids, {user_id: tagObj.user_id})[0].id;
 
       time_entries_tags.push(time_entry_tag);
 

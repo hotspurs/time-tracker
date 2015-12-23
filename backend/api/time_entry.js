@@ -1,10 +1,31 @@
 var router = require('express').Router(),
     app = require('../server'),
-    knex = app.get('knex');
+    knex = app.get('knex'),
+    Promise = require('bluebird');
 
 router.get('/', function(req,res,next){
-  knex('time_entry').where({user_id: req.session.passport.user}).then(function(tags){
-    res.json(tags);
+  knex('time_entry')
+  .where({user_id: req.session.passport.user})
+  .then(function(entries){
+    
+    var promises = [];
+
+    entries.forEach(function(item){
+       promises.push( knex('time_entries_tags').where('time_entry_id', item.id) );
+    })
+
+    Promise.all(promises).then(function(results){
+
+
+      entries.forEach(function(item, index){
+        item.tags = results[index];
+      });
+
+      res.json(entries);
+
+    });
+
+    
   });
 });
 
@@ -36,7 +57,7 @@ router.put('/', function(req, res, next){
       start_at = req.body.start_at,
       stop_at = req.body.stop_at;
 
-  knex('time_entry').where({ id: id}).insert({ 
+  knex('time_entry').where({ id: id}).update({ 
     project_id: project_id,
     description: description,
     start_at: start_at,
@@ -47,8 +68,8 @@ router.put('/', function(req, res, next){
 
 });
 
-router.delete('/', function(req, res, next){
-  var id = req.body.id;
+router.delete('/:id', function(req, res, next){
+  var id = req.params.id;
 
   knex('time_entry').del().where({ id: id}).then(function(id){
     res.json(true);
