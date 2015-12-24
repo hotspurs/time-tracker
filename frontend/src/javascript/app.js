@@ -1,8 +1,54 @@
-angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker']).controller('mainCtrl', function ($scope, $window, $http) {
+angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).controller('mainCtrl', function ($scope, $window, $http) {
 
   $scope.entries = [];
-
   moment.locale('ru');
+
+  /* TIMER  / NEW ENTRY*/
+
+ $scope.timerRunning = false;
+
+ $scope.currentEntry = {};
+
+ $scope.startTimer = function (){
+    $scope.$broadcast('timer-start');
+    $scope.timerRunning = true;
+    $scope.currentEntry.start_at = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+  };
+
+  $scope.stopTimer = function (){
+    $scope.$broadcast('timer-stop');
+    $scope.currentEntry.stop_at = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
+
+    $scope.addEntry(function(){
+        $scope.timerRunning = false;
+    });
+
+  };
+
+  $scope.addEntry = function(cb){
+    $http.post('/api/time_entry', {
+      project_id: $scope.currentEntry.project_id,
+      description: $scope.currentEntry.description,
+      start_at: $scope.currentEntry.start_at,
+      stop_at: $scope.currentEntry.stop_at,
+    }).then(function(data){
+       
+        $scope.currentEntry.id = data.id;
+
+        $scope.entries.push($scope.currentEntry);
+
+        $scope.entries = _.sortBy($scope.entries, function(entry){
+          return entry.start_at;
+        }).reverse();
+
+        $scope.currentEntry = {};
+
+       if(data.id){
+        console.log('ADDED');
+       }
+    }); 
+  };
+
 
   $scope.formatDate = function(date){
     return moment(date).format("D MMM YYYY, H:mm:ss");
@@ -20,6 +66,18 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker']).controlle
 
   }
 
+  $scope.showEntryTag = function(tag_id){
+    var tag = _.findWhere($scope.tags, {id:tag_id});
+
+
+
+    if(tag){
+      return tag.name;
+    } else {
+      return '';
+    }
+  }
+
   $scope.deleteEntry = function(id){
     $http.delete('/api/time_entry/'+ id).then(function(data){
        console.log(data);
@@ -27,12 +85,13 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker']).controlle
           var index = _.findIndex($scope.entries, {id: id });
           $scope.entries.splice(index, 1);
        }
-    });    
+    }); 
   }
 
 
   $scope.editModeEntry = function(id){
     var index = _.findIndex($scope.entries, {id: id });
+
     $scope.entries[index].editing = true;
   }
 
@@ -42,6 +101,10 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker']).controlle
     var entry = $scope.entries[index];
 
     $scope.entries[index].editing = false;
+
+    $scope.entries = _.sortBy($scope.entries, function(entry){
+      return entry.start_at;
+    }).reverse();
 
     $http.put('/api/time_entry', {
       id: entry.id,
@@ -60,12 +123,16 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker']).controlle
 
   function getEntries(){
     $http.get('/api/time_entry').then(function(data){
-      $scope.entries = data.data;
+      $scope.entries = _.sortBy(data.data, function(entry){
+        return entry.start_at;
+      }).reverse();
 
-      console.log('ENTRIES', data.data);
+      $scope.user_id = $scope.entries[0].user_id;
 
       $scope.entries.forEach(function(item){
         item.editing = false;
+        item.start_at = moment(item.start_at).format('YYYY-MM-DD HH:mm:ss');
+        item.stop_at = moment(item.stop_at).format('YYYY-MM-DD HH:mm:ss');
       });
     });
 

@@ -45,6 +45,7 @@ router.post('/', function(req, res, next){
     start_at: start_at,
     stop_at: stop_at
   }).then(function(id){
+    id = id[0];
     res.json({ id: id });
   });
 
