@@ -9,9 +9,33 @@
 </head>
 <body ng-app="app" ng-cloak>
 <div ng-controller="mainCtrl" class="container">
+    <script type="text/ng-template" id="projectsPopup.html">
+        <div class="modal-header">
+            <h3 class="modal-title">Добавить проект</h3>
+        </div>
+        <div class="modal-body">
+        <input type="text" class="form-control" ng-model="project.name">
+        <button style="margin-top:10px;" class="btn btn-success" type="button" ng-click="addProject()">Добавить проект</button>
+
+        <h3 style="margin-top:10px;" ng-show="projects.length" class="modal-title">Удалить проекты</h3>
+        <div ng-repeat="project in projects">
+
+            <hr>
+            {{project.name}}
+            <button ng-click="deleteProject(project.id)" type="button" class="btn btn-danger btn-sm"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span>Удалить</button>
+            <hr>
+        </div>
+
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" type="button" ng-click="close()">Закрыть</button>
+        </div>
+    </script>
+
 <div class="row">
   <div class="col-md-12">
-    <a class="logout pull-right" href="/logout">Выход</a>
+    <a class="header__link btn btn-primary pull-right" href="/logout">Выход</a>
+    <a ng-click="openAddProjectPopup()" class="header__link btn btn-primary pull-right">Проекты</a>
     <h1>Time tracker app</h1>
     <hr>
     <h2>Добавить новую запись</h2>
@@ -22,6 +46,7 @@
     <button ng-hide="timerRunning" ng-click="startTimer()">
       Включить таймер
     </button>
+
     <button ng-show="timerRunning" ng-click="stopTimer()">
       Выключить таймер
     </button>
@@ -37,6 +62,7 @@
     </div>
 
     <hr>
+    <h2>Текущие записи</h2>
     <table class="table table-condensed"> 
       <thead> 
         <tr> 
@@ -118,30 +144,10 @@
       <tr> 
       </tbody> 
     </table>
-  </div>
+  </div> 
 </div>
 
 </div>
-
-
-<script type="text/ng-template" id="myModalContent.html">
-    <div class="modal-header">
-        <h3 class="modal-title">I'm a modal!</h3>
-    </div>
-    <div class="modal-body">
-        <ul>
-            <li ng-repeat="item in items">
-                <a href="#" ng-click="$event.preventDefault(); selected.item = item">{{ item }}</a>
-            </li>
-        </ul>
-        Selected: <b>{{ selected.item }}</b>
-    </div>
-    <div class="modal-footer">
-        <button class="btn btn-primary" type="button" ng-click="ok()">OK</button>
-        <button class="btn btn-warning" type="button" ng-click="cancel()">Cancel</button>
-    </div>
-</script>
-
 <script src="vendor/angular.min.js"></script>
 <script src="vendor/underscore.js"></script>
 <script src="vendor/ui-bootstrap-tpls-0.14.3.min.js"></script>

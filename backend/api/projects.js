@@ -13,8 +13,9 @@ router.post('/', function(req, res, next){
   var user_id = req.session.passport.user,
       name = req.body.name;
 
-  knex('project').returning('id').insert({ user_id: user_id, name: name }).then(function(id){
-    res.json({ id: id });
+  knex('project').insert({ user_id: user_id, name: name }).then(function(id){
+    id = id[0];
+    res.json({ id: id, user_id: user_id });
   });
 
 });
@@ -29,13 +30,14 @@ router.put('/', function(req, res, next){
 
 });
 
-router.delete('/', function(req, res, next){
-  var id = req.body.id;
+router.delete('/:id', function(req, res, next){
+  var id = req.params.id;
 
   knex('project').del().where({ id: id}).then(function(id){
     res.json(true);
   });
 
 });
+
 
 module.exports = router;

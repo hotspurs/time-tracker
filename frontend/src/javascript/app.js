@@ -1,7 +1,25 @@
-angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).controller('mainCtrl', function ($scope, $window, $http) {
+angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).controller('mainCtrl', function ($scope, $window, $http, $uibModal) {
 
   $scope.entries = [];
   moment.locale('ru');
+
+  /* ADD PROJECT POPUP */
+  $scope.openAddProjectPopup = function () {
+
+    var modalInstance = $uibModal.open({
+      animation: true,
+      templateUrl: 'projectsPopup.html',
+      controller: 'projectsPopupCtrl',
+      size: 'sm',
+      resolve: {
+        projects: function(){
+          return $scope.projects;
+        }
+      }
+    });
+  };
+
+
 
   /* TIMER  / NEW ENTRY*/
 
@@ -127,6 +145,8 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).
         return entry.start_at;
       }).reverse();
 
+      console.log('DATA', data.data);
+
       $scope.user_id = $scope.entries[0].user_id;
 
       $scope.entries.forEach(function(item){
@@ -156,3 +176,46 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).
   getTags();
 
 });
+
+angular.module('app').controller('projectsPopupCtrl', function ($scope, $http, $uibModalInstance, projects) {
+  $scope.project = {};
+  $scope.projects = projects;
+
+  console.log('PROJECTS', projects);
+
+  $scope.close = function () {
+    $uibModalInstance.close();
+  };
+
+  $scope.deleteProject = function(project_id){
+    $http.delete('/api/projects/'+ project_id).then(function(data){
+       if(data.data){
+          var index = _.findIndex($scope.projects, {id: project_id });
+          $scope.projects.splice(index, 1);
+       }
+    }); 
+  }
+
+  $scope.addProject = function(){
+    $http.post('/api/projects', {
+      name: $scope.project.name
+    }).then(function(data){
+      
+      $scope.project.id = data.data.id;
+      $scope.project.user_id = data.data.user_id;
+
+      $scope.projects.push($scope.project);
+
+      console.log('PROJECTS', $scope.projects);
+
+      $scope.project = {};
+
+       if(data.id){
+        console.log('ADDED PROJECT');
+       }
+    });
+
+  }
+
+});
+

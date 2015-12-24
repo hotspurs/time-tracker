@@ -2,10 +2,6 @@
   display: none !important;
 }
 
-.logout{
-  margin-top: 35px;
-}
-
 .align_center{
   text-align: center;
 }
@@ -14,4 +10,9 @@
   display:inline-block;
   margin-right:5px;
   margin-bottom:5px;
+}
+
+.header__link{
+  margin-top: 35px;
+  margin-left: 10px;
 }
