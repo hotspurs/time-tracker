@@ -4,6 +4,7 @@
     Time tracker app
   </title>
   <link rel="stylesheet" href="styles/bootstrap.css">
+  <link rel="stylesheet" href="styles/chartist.min.css">
   <link rel="stylesheet" href="styles/main.css">
   <meta charset="utf-8">
 </head>
@@ -36,114 +37,127 @@
   <div class="col-md-12">
     <a class="header__link btn btn-primary pull-right" href="/logout">Выход</a>
     <a ng-click="openAddProjectPopup()" class="header__link btn btn-primary pull-right">Проекты</a>
+    <a ng-hide="showStatictic" ng-click="showStaticticTrigger()" class="header__link btn btn-primary pull-right">Показать статистику</a>
+    <a ng-show="showStatictic" ng-click="showStaticticTrigger()" class="header__link btn btn-primary pull-right">Скрыть статистику</a>
     <h1>Time tracker app</h1>
     <hr>
-    <h2>Добавить новую запись</h2>
-    
-    <timer ng-show="timerRunning" autostart="false">
-      <p>{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, {{seconds}} second{{secondsS}}.</p>
-    </timer>
-    <button ng-hide="timerRunning" ng-click="startTimer()">
-      Включить таймер
-    </button>
+    <div ng-hide="showStatictic">
+        <h2>Добавить новую запись</h2>
+        
+        <timer ng-show="timerRunning" autostart="false">
+          <p>{{hours}} hour{{hoursS}}, {{minutes}} minute{{minutesS}}, {{seconds}} second{{secondsS}}.</p>
+        </timer>
+        <button ng-hide="timerRunning" ng-click="startTimer()">
+          Включить таймер
+        </button>
 
-    <button ng-show="timerRunning" ng-click="stopTimer()">
-      Выключить таймер
-    </button>
-    
-    <div ng-show="timerRunning">
-      
-        <h3>Добавить описание</h3>
-        <input type="text" class="form-control" ng-model="currentEntry.description">
-        <h3>Выбрать проект</h3>
-        <select ng-model="currentEntry.project_id"
-                    ng-options="project.id as project.name for project in projects">
-        </select>
-    </div>
-
-    <hr>
-    <h2>Текущие записи</h2>
-    <table class="table table-condensed"> 
-      <thead> 
-        <tr> 
-          <th>Описание</th>
-          <th>Проект</th>
-          <th>Теги</th>
-          <th>Дата начала</th> 
-          <th>Дата окончания</th>
-        </tr> 
-      </thead> 
-      <tbody> 
-        <tr ng-repeat="entry in entries"> 
-        <td>
-          <div ng-hide="entry.editing">
-              {{entry.description}}
-          </div>
-          <div ng-show="entry.editing">
-              <input type="text" class="form-control" ng-model="entry.description">
-          </div>
-        </td>
-        <td>
-          <div ng-hide="entry.editing">
-            {{showEntryProject(entry.project_id)}}
-          </div>
-          <div ng-show="entry.editing">
-            <select ng-model="entry.project_id"
-                    ng-options="project.id as project.name for project in projects"
-            >
+        <button ng-show="timerRunning" ng-click="stopTimer()">
+          Выключить таймер
+        </button>
+        
+        <div ng-show="timerRunning">
+          
+            <h3>Добавить описание</h3>
+            <input type="text" class="form-control" ng-model="currentEntry.description">
+            <h3>Выбрать проект</h3>
+            <select ng-model="currentEntry.project_id"
+                        ng-options="project.id as project.name for project in projects">
             </select>
-          </div>
+        </div>
 
-        </td>
-        <td>
-          <span class="badge" ng-repeat="tag in entry.tags">
-              {{showEntryTag(tag.tag_id)}}
-          </span>
-        </td>
-        <td>
-          <div ng-show="entry.editing">
-            <datetimepicker ng-model="entry.start_at" 
-                date-format="dd-MMM-yyyy"
-                show-meridian="false"
-                starting-day="1"
-                date-options='{"show-weeks":"false"}'
+        <hr>
+        <h2>Текущие записи</h2>
+        <table class="table table-condensed"> 
+          <thead> 
+            <tr> 
+              <th>Описание</th>
+              <th>Проект</th>
+              <th>Теги</th>
+              <th>Дата начала</th> 
+              <th>Дата окончания</th>
+            </tr> 
+          </thead> 
+          <tbody> 
+            <tr ng-repeat="entry in entries"> 
+            <td>
+              <div ng-hide="entry.editing">
+                  {{entry.description}}
+              </div>
+              <div ng-show="entry.editing">
+                  <input type="text" class="form-control" ng-model="entry.description">
+              </div>
+            </td>
+            <td>
+              <div ng-hide="entry.editing">
+                {{showEntryProject(entry.project_id)}}
+              </div>
+              <div ng-show="entry.editing">
+                <select ng-model="entry.project_id"
+                        ng-options="project.id as project.name for project in projects"
                 >
-            </datetimepicker>
-          </div>
-        <div ng-hide="entry.editing">  
-          {{formatDate(entry.start_at)}}
-        </div>
-        </td> 
-        <td>
-          <div ng-show="entry.editing">
-            <datetimepicker ng-model="entry.stop_at" 
-                date-format="dd-MMM-yyyy"
-                show-meridian="false"
-                starting-day="1"
-                date-options='{"show-weeks":"false"}'
-                >
-            </datetimepicker>
-          </div>
-        <div ng-hide="entry.editing">  
-          {{formatDate(entry.stop_at)}}
-        </div>
-        </td>
-        <td class="align_center">
-          <button ng-hide="entry.editing" ng-click="editModeEntry(entry.id)" type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Редактировать</button>
-          <button ng-show="entry.editing" ng-click="saveChangesEntry(entry.id)"  type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
-          Сохранить</button>
-          
-        </td>
-        <td class="align_center">
-          <button ng-click="deleteEntry(entry.id)" type="button" class="btn btn-danger btn-sm"><span ng-click="deleteEntry(entry.id)" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
-          Удалить
-          </button>
-          
-        </td>
-        </tr> 
-      <tr> 
-      </tbody> 
-    </table>
+                </select>
+              </div>
+
+            </td>
+            <td>
+              <span class="badge" ng-repeat="tag in entry.tags">
+                  {{showEntryTag(tag.tag_id)}}
+              </span>
+            </td>
+            <td>
+              <div ng-show="entry.editing">
+                <datetimepicker ng-model="entry.start_at" 
+                    date-format="dd-MMM-yyyy"
+                    show-meridian="false"
+                    starting-day="1"
+                    date-options='{"show-weeks":"false"}'
+                    >
+                </datetimepicker>
+              </div>
+            <div ng-hide="entry.editing">  
+              {{formatDate(entry.start_at)}}
+            </div>
+            </td> 
+            <td>
+              <div ng-show="entry.editing">
+                <datetimepicker ng-model="entry.stop_at" 
+                    date-format="dd-MMM-yyyy"
+                    show-meridian="false"
+                    starting-day="1"
+                    date-options='{"show-weeks":"false"}'
+                    >
+                </datetimepicker>
+              </div>
+            <div ng-hide="entry.editing">  
+              {{formatDate(entry.stop_at)}}
+            </div>
+            </td>
+            <td class="align_center">
+              <button ng-hide="entry.editing" ng-click="editModeEntry(entry.id)" type="button" class="btn btn-primary btn-sm"><span class="glyphicon glyphicon-edit" aria-hidden="true"></span> Редактировать</button>
+              <button ng-show="entry.editing" ng-click="saveChangesEntry(entry.id)"  type="button" class="btn btn-success btn-sm"><span class="glyphicon glyphicon-ok-circle" aria-hidden="true"></span>
+              Сохранить</button>
+              
+            </td>
+            <td class="align_center">
+              <button ng-click="deleteEntry(entry.id)" type="button" class="btn btn-danger btn-sm"><span ng-click="deleteEntry(entry.id)" class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+              Удалить
+              </button>
+              
+            </td>
+            </tr> 
+          <tr> 
+          </tbody> 
+        </table>
+  </div>
+  <div ng-show="showStatictic">
+    <div class="chartist">
+      
+    </div>
+    <div class="chartist_pie">
+      
+    </div>
+  </div>
+
   </div> 
 </div>
 
@@ -155,6 +169,7 @@
 <script src="vendor/datetimepicker.js"></script>
 <script src="vendor/moment-with-locales.js"></script>
 <script src="vendor/humanize-duration.js"></script>
+<script src="vendor/chartist.js"></script>
 <script src="javascript/app.js"></script>
 </body>
 </html>

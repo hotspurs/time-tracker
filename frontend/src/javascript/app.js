@@ -3,6 +3,82 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).
   $scope.entries = [];
   moment.locale('ru');
 
+  $scope.showStatictic = false;
+
+  $scope.showStaticticTrigger = function(){
+
+    if(!$scope.showStatictic){
+      $scope.chartist();
+    }
+
+    $scope.showStatictic = !$scope.showStatictic;
+  }
+
+  $scope.getWeekDaysHoursDuraction = function(){
+    var data = [];
+
+
+    var monday = moment().day(1),
+        sunday = moment().day(7);
+
+    data = $scope.entries.filter(function(item){
+
+      return moment(item.start_at).isBetween(moment(monday), moment(sunday));
+
+    });
+
+    data = $scope.entries.map(function(item){
+
+        var start_at = item.start_at,
+            stop_at = item.stop_at,
+            start_at_milsec = new Date(start_at),
+            stop_at_milsec = new Date(stop_at);
+
+
+      console.log('=>>>', (stop_at_milsec - start_at_milsec) / 60 / 60 / 60 );
+
+      return (stop_at_milsec - start_at_milsec) / 60;
+
+
+    });
+
+  }
+
+  $scope.chartist = function(){
+
+    $scope.getWeekDaysHoursDuraction()
+
+    var data = {
+      labels: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'],
+      series: [
+        [0, 5, 3, 2, 0, 3, 1]
+      ]
+    };
+
+    var options = {
+      seriesBarDistance: 5
+    };
+
+    
+    new Chartist.Bar('.chartist', data, options);
+    /*
+
+    var data = {
+      series: [5, 3, 4]
+    };
+
+
+    var sum = function(a, b) { return a + b };
+
+    new Chartist.Pie('.chartist_pie', data, {
+      labelInterpolationFnc: function(value) {
+        return Math.round(value / data.series.reduce(sum) * 100) + '%';
+      }
+    });
+    */
+
+  }
+
   /* ADD PROJECT POPUP */
   $scope.openAddProjectPopup = function () {
 
@@ -34,11 +110,11 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).
   };
 
   $scope.stopTimer = function (){
-    $scope.$broadcast('timer-stop');
     $scope.currentEntry.stop_at = moment(new Date()).format('YYYY-MM-DD HH:mm:ss');
 
     $scope.addEntry(function(){
         $scope.timerRunning = false;
+        $scope.$broadcast('timer-clear');
     });
 
   };
@@ -60,7 +136,7 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).
         }).reverse();
 
         $scope.currentEntry = {};
-
+        cb();
        if(data.id){
         console.log('ADDED');
        }
@@ -144,10 +220,6 @@ angular.module('app', ['ui.bootstrap', 'ui.bootstrap.datetimepicker', 'timer']).
       $scope.entries = _.sortBy(data.data, function(entry){
         return entry.start_at;
       }).reverse();
-
-      console.log('DATA', data.data);
-
-      $scope.user_id = $scope.entries[0].user_id;
 
       $scope.entries.forEach(function(item){
         item.editing = false;
